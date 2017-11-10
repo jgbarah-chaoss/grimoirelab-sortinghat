@@ -40,7 +40,7 @@ from sortinghat.exceptions import CODE_DATABASE_ERROR, CODE_VALUE_ERROR
 from tests.config import DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
 
-DB_ACCESS_ERROR = r".+Access denied for user '%(user)s'@'localhost' \(using password: YES\)"
+DB_ACCESS_ERROR = r".+Access denied for user '%(user)s'@'localhost'"
 DB_EXISTS_ERROR = r".+Can't create database '%(database)s'; database exists \(err: 1007\)"
 
 

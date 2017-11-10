@@ -45,27 +45,35 @@ REGISTRY_DOM_NOT_FOUND_ERROR = "Error: example.com not found in the registry"
 REGISTRY_DOM_NOT_FOUND_ERROR_ALT = "Error: bitergia.com not found in the registry"
 REGISTRY_EMPTY_OUTPUT = ""
 
-REGISTRY_OUTPUT = """Bitergia\tbitergia.net
-Bitergia\tbitergia.com *
+REGISTRY_OUTPUT = """Bitergia\tbitergia.com *
+Bitergia\tbitergia.net
 Example\texample.com
-Example\texample.org
 Example\texample.net
+Example\texample.org
 LibreSoft"""
 
 REGISTRY_OUTPUT_ALT = """Bitergia\tbitergia.net
-Example\texample.com
 Example\tbitergia.com
-Example\texample.org
+Example\texample.com
 Example\texample.net
+Example\texample.org
 LibreSoft"""
 
 REGISTRY_OUTPUT_EXAMPLE = """Example\texample.com
-Example\texample.org
 Example\texample.net
+Example\texample.org
 MyExample\tmyexample.com"""
 
 REGISTRY_OUTPUT_EXAMPLE_ALT = """Example\texample.com
 Example\texample.net"""
+
+
+def sort_lines(lines):
+    """Return a string with the lines in a string sorted.
+
+    Needed because output comes in different orders in MySQL / mariadb."""
+
+    return '\n'.join(sorted(lines.splitlines()))
 
 
 class TestOrgsCaseBase(TestCommandCaseBase):
@@ -106,7 +114,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
 
         code = self.cmd.run()
         self.assertEqual(code, CMD_SUCCESS)
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT_EXAMPLE)
 
     def test_list_without_args(self):
@@ -114,7 +122,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
 
         code = self.cmd.run('-l')
         self.assertEqual(code, CMD_SUCCESS)
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT)
 
     def test_list_with_args(self):
@@ -126,7 +134,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
 
         code = self.cmd.run('--list', 'Example')
         self.assertEqual(code, CMD_SUCCESS)
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT_EXAMPLE)
 
     def test_add_with_args(self):
@@ -160,7 +168,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
         self.assertEqual(code, CMD_SUCCESS)
 
         self.cmd.run('--list')
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT)
 
     def test_add_without_args(self):
@@ -173,7 +181,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
         self.assertEqual(code, CMD_SUCCESS)
 
         self.cmd.run('-l')
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_EMPTY_OUTPUT)
 
     def test_add_with_overwrite_option(self):
@@ -188,7 +196,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
         self.assertEqual(code, CMD_SUCCESS)
 
         self.cmd.run('-l')
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT_ALT)
 
     def test_delete_with_args(self):
@@ -208,7 +216,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
         self.assertEqual(code, CMD_SUCCESS)
 
         self.cmd.run('--list')
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT_EXAMPLE_ALT)
 
     def test_delete_without_args(self):
@@ -218,7 +226,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
         self.assertEqual(code, CMD_SUCCESS)
 
         self.cmd.run('-l')
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT)
 
     def test_run_mixing_actions(self):
@@ -242,7 +250,7 @@ class TestOrgsCommand(TestOrgsCaseBase):
         self.cmd.run('-d', 'Bitergia')
         self.cmd.run()
 
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT_EXAMPLE_ALT)
 
 
@@ -277,7 +285,7 @@ class TestOrgsAdd(TestOrgsCaseBase):
 
         # List the registry and check the output
         self.cmd.registry()
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT)
 
     def test_existing_organization(self):
@@ -528,7 +536,7 @@ class TestOrgsRegistry(TestOrgsCaseBase):
 
         code = self.cmd.registry()
         self.assertEqual(code, CMD_SUCCESS)
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT)
 
     def test_registry_term(self):
@@ -540,7 +548,7 @@ class TestOrgsRegistry(TestOrgsCaseBase):
 
         code = self.cmd.registry('Example')
         self.assertEqual(code, CMD_SUCCESS)
-        output = sys.stdout.getvalue().strip()
+        output = sort_lines(sys.stdout.getvalue().strip())
         self.assertEqual(output, REGISTRY_OUTPUT_EXAMPLE)
 
     def test_not_found_term(self):
